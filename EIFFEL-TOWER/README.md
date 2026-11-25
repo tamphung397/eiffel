@@ -18,7 +18,7 @@ go up behind the rooftops, while small figures stroll along the wet pavement.
 - **The street:** a camera at eye height, 444 m away. House fronts, windows, lamps and trees are traced cell by cell, and the wet road mirrors the tower with rippling reflections.
 - **Picking characters:** girders and braces use the stroke that follows their direction on screen (`- / | \`). Solid shapes get an outline and are filled with letters chosen by brightness.
 - **Lighting up:** gold sweeps up the tower with a white edge. New platforms and arches flash white-hot, then cool down.
-- **Sky:** a two-beam searchlight, rockets that burst into falling sparks, twinkling stars.
+- **Sky:** a two-beam searchlight, rockets that burst into falling sparks, twinkling stars and occasional ASCII shooting stars.
 - **Rendering:** a character grid drawn with a soft double glow and fading trails.
 
 Built with Python, NumPy and pygame-ce.

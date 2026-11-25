@@ -259,6 +259,7 @@
   const skyX = SKY.map(p => Math.floor(p[0] * COLS));
   const skyY = SKY.map(p => Math.floor(p[1] * Math.max(Math.floor(HORIZON * ROWS) - 1, 1)));
   const FIREWORK_RISE = 0.75, FIREWORK_LIFE = 1.9, FIREWORK_EVERY = 0.55;
+  const METEOR_PERIOD = 7.5, METEOR_DURATION = 0.95;
 
   function emptyBody() {
     const body = { char: new Int16Array(count), rgb: new Float32Array(size3), lum: new Float32Array(count),
@@ -550,6 +551,30 @@
   function projectWorld(p) {
     return projectCam([p[0], p[1] - eyeY, -p[2] + eyeZ]);
   }
+  function shootingStar(char, rgb, sky, t) {
+    const schedule = t + 2, cycle = Math.floor(schedule / METEOR_PERIOD);
+    const phase = schedule - cycle * METEOR_PERIOD;
+    if (phase > METEOR_DURATION) return;
+    const random = rng(6000 + cycle), direction = random() < 0.5 ? 1 : -1;
+    const travelX = 18 + random() * 16, travelY = 6 + random() * 7;
+    const x0 = direction > 0 ? random() * (COLS - travelX) : travelX + random() * (COLS - travelX);
+    const y0 = 1 + random() * Math.max(1, Math.floor(HORIZON * ROWS) - travelY - 3);
+    const progress = phase / METEOR_DURATION, headX = x0 + direction * travelX * progress;
+    const headY = y0 + travelY * progress, length = Math.hypot(travelX, travelY);
+    const trailGlyph = slopeChar(direction * travelX, -travelY), fade = 1 - 0.5 * progress;
+    for (let k = 8; k >= 0; k--) {
+      const distance = k * 1.1, x = Math.round(headX - direction * travelX / length * distance);
+      const y = Math.round(headY - travelY / length * distance);
+      if (x < 0 || x >= COLS || y < 0 || y >= ROWS) continue;
+      const i = y * COLS + x;
+      if (!sky[i]) continue;
+      const strength = fade * (1 - k / 12);
+      char[i] = k === 0 ? GLYPH("*") : k < 3 ? GLYPH("+") : trailGlyph;
+      rgb[i * 3] = (k === 0 ? WHITE[0] : 0.62) * strength;
+      rgb[i * 3 + 1] = (k === 0 ? WHITE[1] : 0.78) * strength;
+      rgb[i * 3 + 2] = strength;
+    }
+  }
   function beacon(char, rgb, sky, steady, t) {
     const on = smooth((t - T_BEACON) / 0.8), top = [0, GROUND + 291 * S, 0];
     const tq = projectWorld(top), toEye = unit([-top[0], eyeY - top[1], eyeZ + top[2]]);
@@ -669,6 +694,7 @@
       char[index] = GLYPH(tw < 0.35 ? "." : tw < 0.6 ? "+" : "*");
       setColor(rgb, index, WHITE.map(v => v * tw));
     }
+    shootingStar(char, rgb, sky, t);
     const steady = new Uint8Array(count);
     if (t > T_BEACON) beacon(char, rgb, sky, steady, t);
 
@@ -726,7 +752,7 @@
   function drawHUD(info, t) {
     composite.font = "14px Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
     composite.textAlign = "left"; composite.textBaseline = "alphabetic";
-    composite.fillStyle = "rgb(176 168 196)"; composite.fillText("@dwcminh.ascii", 24, H - 74);
+    composite.fillStyle = "rgb(176 168 196)"; composite.fillText("@tamphung.ascii", 24, H - 74);
     composite.fillStyle = "rgb(110 104 120)";
     composite.fillText(`sparkles ${String(info.sparkles).padStart(4)}      fireworks ${String(info.fireworks).padStart(4)}`, 24, H - 48);
     composite.fillText(`letters ${info.letters.toLocaleString("en-US")}`, 24, H - 27);
