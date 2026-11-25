@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#030408">
+  <title>ASCII Eiffel Tower</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #030408; }
+    body { display: grid; place-items: center; color: #fff; font-family: Consolas, Menlo, monospace; }
+    canvas { width: min(100vw, 76.45vh); height: auto; max-height: 100vh; display: block; }
+    #music-toggle {
+      position: fixed;
+      z-index: 2;
+      top: max(6px, env(safe-area-inset-top));
+      right: max(6px, env(safe-area-inset-right));
+      min-height: 32px;
+      padding: 4px 8px;
+      border: 1px solid rgba(255, 196, 90, 0.65);
+      border-radius: 8px;
+      background: rgba(8, 10, 18, 0.88);
+      color: #ffe0a2;
+      font: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    #music-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <canvas id="eiffel" width="792" height="1036" aria-label="Animated ASCII Eiffel Tower in Paris at night"></canvas>
+  <button id="music-toggle" type="button" aria-pressed="false" aria-label="Bật nhạc">♪ Bật nhạc</button>
+  <audio id="background-music" src="./YouTube.mp3" preload="auto" loop></audio>
+  <script>
+    const music = document.getElementById("background-music");
+    const musicToggle = document.getElementById("music-toggle");
+
+    function showPlaying() {
+      musicToggle.textContent = "♪ Tắt nhạc";
+      musicToggle.setAttribute("aria-label", "Tắt nhạc");
+      musicToggle.setAttribute("aria-pressed", "true");
+      musicToggle.removeAttribute("title");
+    }
+
+    function showPaused() {
+      musicToggle.textContent = "♪ Bật nhạc";
+      musicToggle.setAttribute("aria-label", "Bật nhạc");
+      musicToggle.setAttribute("aria-pressed", "false");
+    }
+
+    async function startMusic() {
+      try {
+        await music.play();
+        showPlaying();
+      } catch (error) {
+        showPaused();
+        if (error.name === "NotAllowedError") {
+          musicToggle.title = "Trình duyệt chặn tự phát; chạm nút để bật nhạc.";
+        } else {
+          musicToggle.textContent = "Lỗi phát nhạc — thử lại";
+          musicToggle.title = error.message;
+        }
+      }
+    }
+
+    musicToggle.addEventListener("click", () => {
+      if (music.paused) startMusic();
+      else music.pause();
+    });
+    music.addEventListener("play", showPlaying);
+    music.addEventListener("pause", showPaused);
+    music.addEventListener("error", () => {
+      musicToggle.textContent = "Lỗi tải nhạc — thử lại";
+      musicToggle.title = "Không tải được YouTube.mp3.";
+    });
+    startMusic();
+  </script>
+  <script src="./app.js" defer></script>
+</body>
+</html>

@@ -23,6 +23,24 @@ go up behind the rooftops, while small figures stroll along the wet pavement.
 
 Built with Python, NumPy and pygame-ce.
 
+## Run in a browser
+
+Serve this folder with any static web server (for example, `python -m http.server 8000`)
+and visit `http://localhost:8000`; serving it over HTTP also lets the browser load the MP3.
+The browser version does not require Python packages. It recreates the animation in Canvas;
+its seeded procedural details may differ slightly from the Python renderer.
+The page attempts to autoplay `YouTube.mp3`; if the browser blocks autoplay, tap the music
+button in the upper-right corner to start or stop playback.
+
+Keys: `Space` pause · `R` restart · `S` save a screenshot
+
+## Deploy on GitHub Pages
+
+The [deployment workflow](../.github/workflows/deploy-eiffel.yml) publishes the HTML, renderer,
+and MP3 when changes are pushed to `master`. In the repository settings, set **Pages → Build
+and deployment → Source** to **GitHub Actions**. The workflow can also be started manually
+from the Actions tab.
+
 ## Run it
 
 ```
