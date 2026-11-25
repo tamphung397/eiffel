@@ -752,7 +752,7 @@
   function drawHUD(info, t) {
     composite.font = "14px Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
     composite.textAlign = "left"; composite.textBaseline = "alphabetic";
-    composite.fillStyle = "rgb(176 168 196)"; composite.fillText("@tamphung.ascii", 24, H - 74);
+    composite.fillStyle = "rgb(176 168 196)"; composite.fillText("@tamphung.asci", 24, H - 74);
     composite.fillStyle = "rgb(110 104 120)";
     composite.fillText(`sparkles ${String(info.sparkles).padStart(4)}      fireworks ${String(info.fireworks).padStart(4)}`, 24, H - 48);
     composite.fillText(`letters ${info.letters.toLocaleString("en-US")}`, 24, H - 27);
